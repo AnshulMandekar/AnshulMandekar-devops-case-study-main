@@ -16,6 +16,16 @@ secured, deployed, configured and monitored with a complete DevOps toolchain.
 | 4 – Monitoring & logging | Prometheus + Grafana, app metrics, dashboard (uptime, latency, error rate), alerts | [`monitoring/`](monitoring), [`docker-compose.yml`](docker-compose.yml) |
 | 5 – Reflection & report | Architecture, pipeline flow, challenges, lessons learned | [this README](#task-5--reflection) |
 
+## Case study answers (summary)
+
+The full answers, with diagrams and tables, are in [`docs/CA2_DevOps_Case_Studies.docx`](docs/CA2_DevOps_Case_Studies.docx).
+
+| Question | Problem | DevOps solution | Outcome |
+|---|---|---|---|
+| **Q1 – Netflix** | 2008 database corruption stopped DVD shipments for 3 days: a single vertically scaled database, tightly coupled monolith, slow recovery and risky releases | Cloud-native microservices on AWS (database per service, multi-region, circuit breakers), "you build it, you run it", Spinnaker continuous delivery and **Chaos Engineering** (Chaos Monkey, Simian Army, Chaos Kong) | Failures isolated to one service, elastic global scaling, resilience continuously tested in production |
+| **Q2 – Amazon** | Monolith ("Obidos") caused frequent site-wide outages and slow, coordinated releases | Service-oriented / microservices architecture behind APIs, **two-pizza teams** owning services end-to-end, automated deployment pipelines with rollback | Independent deployments – on average one every ~11.7 seconds – and a culture of continuous experimentation |
+| **Q3 – Capital One** | 6–9 month release cycles under strict security and regulatory requirements | **DevSecOps**: shift-left security, automated SAST / dependency / IaC scanning as pipeline gates, compliance as code (Cloud Custodian), automated change records | Faster releases with stronger, auditable security; security becomes an enabler, not a final gate |
+
 ---
 
 ## Architecture
