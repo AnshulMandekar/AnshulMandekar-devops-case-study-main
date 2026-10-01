@@ -9,7 +9,7 @@ secured, deployed, configured and monitored with a complete DevOps toolchain.
 
 | Task | What is delivered | Where |
 |---|---|---|
-| Case studies | Netflix, Amazon and Capital One analysis with diagrams | [`docs/CA2_DevOps_Case_Studies.docx`](docs/CA2_DevOps_Case_Studies.docx) |
+| Case studies | Netflix (Q1) and Amazon (Q2) analysis with diagrams | [`docs/CA2_DevOps_Case_Studies.docx`](docs/CA2_DevOps_Case_Studies.docx) |
 | 1 – Deployment strategy | GitHub Actions pipeline: test → security scan → build & push → deploy to Kubernetes | [`.github/workflows/ci-cd.yml`](.github/workflows/ci-cd.yml), [pipeline diagram](#task-1--deployment-strategy-github-actions) |
 | 2 – Configuration management | Ansible playbook + inventory (packages, users, files, systemd service) | [`ansible/`](ansible) |
 | 3 – Containerization & orchestration | Dockerfile, Kubernetes Deployment/Service, rolling update & rollback | [`Dockerfile`](Dockerfile), [`k8s/`](k8s), [`scripts/rolling-update-demo.sh`](scripts/rolling-update-demo.sh) |
@@ -24,7 +24,6 @@ The full answers, with diagrams and tables, are in [`docs/CA2_DevOps_Case_Studie
 |---|---|---|---|
 | **Q1 – Netflix** | 2008 database corruption stopped DVD shipments for 3 days: a single vertically scaled database, tightly coupled monolith, slow recovery and risky releases | Cloud-native microservices on AWS (database per service, multi-region, circuit breakers), "you build it, you run it", Spinnaker continuous delivery and **Chaos Engineering** (Chaos Monkey, Simian Army, Chaos Kong) | Failures isolated to one service, elastic global scaling, resilience continuously tested in production |
 | **Q2 – Amazon** | Monolith ("Obidos") caused frequent site-wide outages and slow, coordinated releases | Service-oriented / microservices architecture behind APIs, **two-pizza teams** owning services end-to-end, automated deployment pipelines with rollback | Independent deployments – on average one every ~11.7 seconds – and a culture of continuous experimentation |
-| **Q3 – Capital One** | 6–9 month release cycles under strict security and regulatory requirements | **DevSecOps**: shift-left security, automated SAST / dependency / IaC scanning as pipeline gates, compliance as code (Cloud Custodian), automated change records | Faster releases with stronger, auditable security; security becomes an enabler, not a final gate |
 
 ---
 
@@ -53,7 +52,7 @@ flowchart LR
 |---|---|
 | Application | Python 3.12, Flask, Gunicorn |
 | Testing & quality | pytest, pytest-cov (85% gate), flake8 |
-| Security (shift-left) | bandit (SAST), pip-audit (dependency CVEs), non-root container, read-only filesystem |
+| Security scanning | bandit (SAST), pip-audit (dependency CVEs), non-root container, read-only filesystem |
 | CI/CD | GitHub Actions, GitHub Container Registry (GHCR) |
 | Containers & orchestration | Docker, Kubernetes (kind / Docker Desktop) |
 | Configuration management | Ansible |
@@ -93,7 +92,7 @@ flowchart LR
 │   ├── setup-monitoring.sh            # installs the monitoring stack
 │   └── load-test.sh                   # generates traffic for the dashboard
 └── docs/
-    ├── CA2_DevOps_Case_Studies.docx   # case-study answers (Q1–Q3)
+    ├── CA2_DevOps_Case_Studies.docx   # case-study answers (Q1 and Q2)
     └── screenshots/                   # evidence for Tasks 3 and 4
 ```
 
@@ -151,7 +150,7 @@ flowchart LR
 | Stage | Job | What happens | Fails the pipeline when |
 |---|---|---|---|
 | CI | `test` | Install deps, `flake8`, `pytest --cov-fail-under=85` | lint error, failing test, coverage < 85% |
-| Shift-left security | `security` | `bandit` static analysis, `pip-audit` dependency audit | medium/high finding, known CVE |
+| Security scan | `security` | `bandit` static analysis, `pip-audit` dependency audit | medium/high finding, known CVE |
 | Build | `build-and-push` | Multi-layer Docker build with cache, push to `ghcr.io/<owner>/devops-case-study-finveritas` | build error |
 | CD | `deploy` | Create kind cluster, load image, apply manifests, rolling update, smoke test | rollout not ready in 180 s, smoke test fails |
 
@@ -288,7 +287,7 @@ provisioned on a plain Linux server with Ansible, showing both the "cattle" (con
 ### Pipeline flow
 1. A developer pushes to `main` (or opens a pull request).
 2. **Test** – flake8 lint, pytest unit/API tests, coverage must be ≥ 85%.
-3. **Security** – bandit static analysis and pip-audit dependency scan (shift-left: problems are found minutes after the commit, not at release time).
+3. **Security** – bandit static analysis and pip-audit dependency scan, so problems are found minutes after the commit, not at release time.
 4. **Build & push** – Docker image tagged with the commit SHA and `latest`, pushed to GHCR.
 5. **Deploy** – a Kubernetes cluster is created inside the runner, the new image is rolled out with zero downtime and smoke-tested.
 6. **Operate** – Prometheus scrapes `/metrics`; Grafana shows uptime, latency and error rate; alert rules flag regressions; `kubectl rollout undo` restores the last good version.
@@ -305,14 +304,13 @@ provisioned on a plain Linux server with Ansible, showing both the "cattle" (con
 ### Lessons learned
 - **Automate everything that repeats** – tests, scans, builds, deployments and server configuration are code, so they are repeatable and reviewable.
 - **Small, independent services deploy safely** – exactly the Amazon "two-pizza team" idea: this service can be released without touching the rest of FinVeritas.
-- **Shift security left** – bandit and pip-audit in CI catch issues before an image even exists (Capital One's DevSecOps lesson).
+- **Catch problems early** – bandit and pip-audit in CI catch issues before an image even exists, when they are cheapest to fix.
 - **Rolling updates + readiness probes = zero downtime**, and versioned images make rollback a one-line command.
 - **You cannot fix what you cannot see** – metrics for uptime, latency and errors, plus deliberate fault injection (Netflix's chaos engineering), turn reliability into something measurable.
 
 ## Connection to the case studies
 - **Amazon (Q2):** the FinVeritas monolith's ratio engine is split into an independently deployable microservice with its own pipeline – the architectural basis for two-pizza teams and frequent deployments.
 - **Netflix (Q1):** rolling updates, health probes, multiple replicas and the `FAULT_RATE` / `EXTRA_LATENCY_MS` chaos switches demonstrate designing for failure and verifying resilience.
-- **Capital One (Q3):** linting, tests, coverage gates, SAST and dependency audits run on every commit – security is embedded in the pipeline instead of being a final gate.
 
 ## Screenshots
 Evidence for Tasks 3 and 4 goes in [`docs/screenshots/`](docs/screenshots) – see the checklist there.

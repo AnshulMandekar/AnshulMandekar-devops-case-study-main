@@ -43,7 +43,7 @@ jobs:
       - name: Run tests with coverage gate
         run: pytest --cov=app --cov-report=term-missing --cov-fail-under=85
 
-  # ── Stage 2: Shift-left security ────────────────────────────────────────────
+  # ── Stage 2: Security scanning ──────────────────────────────────────────────
   security:
     name: Security Scan (SAST + dependencies)
     runs-on: ubuntu-latest
