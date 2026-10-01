@@ -1,6 +1,6 @@
 # DevOps Case Study – FinVeritas Ratio Service (CA-II)
 
-[![CI/CD Pipeline](https://github.com/AnshulMandekar/devops-case-study-finveritas/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/AnshulMandekar/devops-case-study-finveritas/actions/workflows/ci-cd.yml)
+[![CI/CD Pipeline](https://github.com/AnshulMandekar/AnshulMandekar-devops-case-study-main/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/AnshulMandekar/AnshulMandekar-devops-case-study-main/actions/workflows/ci-cd.yml)
 
 Hands-on DevOps implementation for the CA-II case-study evaluation. The service is taken from my B.Tech PBL project
 **FinVeritas** – an explainable financial background-check system – whose financial-ratio engine (liquidity,
@@ -151,7 +151,7 @@ flowchart LR
 |---|---|---|---|
 | CI | `test` | Install deps, `flake8`, `pytest --cov-fail-under=85` | lint error, failing test, coverage < 85% |
 | Security scan | `security` | `bandit` static analysis, `pip-audit` dependency audit | medium/high finding, known CVE |
-| Build | `build-and-push` | Multi-layer Docker build with cache, push to `ghcr.io/<owner>/devops-case-study-finveritas` | build error |
+| Build | `build-and-push` | Multi-layer Docker build with cache, push to `ghcr.io/<owner>/anshulmandekar-devops-case-study-main` | build error |
 | CD | `deploy` | Create kind cluster, load image, apply manifests, rolling update, smoke test | rollout not ready in 180 s, smoke test fails |
 
 **Deployment strategy:** *rolling update* (`maxSurge: 1`, `maxUnavailable: 0`, `minReadySeconds: 5`).

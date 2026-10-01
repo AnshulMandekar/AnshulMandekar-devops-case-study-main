@@ -35,7 +35,7 @@ spec:
         runAsGroup: 10001
       containers:
         - name: api
-          image: ghcr.io/anshulmandekar/devops-case-study-finveritas:latest
+          image: ghcr.io/anshulmandekar/anshulmandekar-devops-case-study-main:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
